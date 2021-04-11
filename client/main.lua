@@ -203,7 +203,7 @@ Citizen.CreateThread(function()
                         else
                             DrawText3D(Config.Locations["vehicle"].coords.x, Config.Locations["vehicle"].coords.y, Config.Locations["vehicle"].coords.z, "~g~E~w~ - Vehicles")
                         end
-                        if IsControlJustReleased(0, Keys["E"]) then
+                        if IsControlJustReleased(0, 38) then
                             if IsPedInAnyVehicle(PlayerPedId(), false) then
                                 DeleteVehicle(GetVehiclePedIsIn(PlayerPedId()))
                                 TriggerServerEvent('qb-tow:server:DoBail', false)
@@ -219,7 +219,7 @@ Citizen.CreateThread(function()
                 if #(pos - vector3(Config.Locations["main"].coords.x, Config.Locations["main"].coords.y, Config.Locations["main"].coords.z)) < 4.5 then
                     if #(pos - vector3(Config.Locations["main"].coords.x, Config.Locations["main"].coords.y, Config.Locations["main"].coords.z)) < 1.5 then
                         DrawText3D(Config.Locations["main"].coords.x, Config.Locations["main"].coords.y, Config.Locations["main"].coords.z, "~g~E~w~ - Payslip")
-                        if IsControlJustReleased(0, Keys["E"]) then
+                        if IsControlJustReleased(0, 38) then
                             if JobsDone > 0 then
                                 RemoveBlip(CurrentBlip)
                                 TriggerServerEvent("qb-tow:server:11101110", JobsDone)
