@@ -133,6 +133,10 @@ AddEventHandler('qb-tow:client:TowVehicle', function()
                             if NpcOn then
                                 RemoveBlip(CurrentBlip)
                                 QBCore.Functions.Notify("Take The Vehicle To Hayes Depot", "success", 5000)
+                                CurrentBlip2 = AddBlipForCoord(491.00, -1314.69, 29.25)
+                                SetBlipColour(CurrentBlip2, 3)
+                                SetBlipRoute(CurrentBlip2, true)
+                                SetBlipRouteColour(CurrentBlip2, 3)
                                 local chance = math.random(1,100)
                                 if chance < 26 then
                                     TriggerServerEvent('qb-tow:server:nano')
@@ -256,6 +260,7 @@ end)
 
 function deliverVehicle(vehicle)
     DeleteVehicle(vehicle)
+    RemoveBlip(CurrentBlip2)
     JobsDone = JobsDone + 1
     VehicleSpawned = false
     QBCore.Functions.Notify("You Have Delivered A Vehicle", "success")

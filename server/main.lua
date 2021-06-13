@@ -19,16 +19,16 @@ AddEventHandler('qb-tow:server:DoBail', function(bool, vehInfo)
         if Player.PlayerData.money.bank >= Config.BailPrice then
             Bail[Player.PlayerData.citizenid] = Config.BailPrice
             Player.Functions.RemoveMoney('bank', Config.BailPrice, "tow-paid-bail")
-            TriggerClientEvent('QBCore:Notify', src, 'You have paid the deposit of $250,- paid', 'success')
+            TriggerClientEvent('QBCore:Notify', src, 'You Have Paid The Deposit Of $'..Config.BailPrice..' Paid', 'success')
             TriggerClientEvent('qb-tow:client:SpawnVehicle', src, vehInfo)
         else
-            TriggerClientEvent('QBCore:Notify', src, 'You Do Not Have Enough Cash, The Deposit Is $250,-', 'error')
+            TriggerClientEvent('QBCore:Notify', src, 'You Do Not Have Enough Cash, The Deposit Is $'..Config.BailPrice..'', 'error')
         end
     else
         if Bail[Player.PlayerData.citizenid] ~= nil then
             Player.Functions.AddMoney('bank', Bail[Player.PlayerData.citizenid], "tow-bail-paid")
             Bail[Player.PlayerData.citizenid] = nil
-            TriggerClientEvent('QBCore:Notify', src, 'You Got Back $250 From The Deposit', 'success')
+            TriggerClientEvent('QBCore:Notify', src, 'You Got Back $'..Config.BailPrice..' From The Deposit', 'success')
         end
     end
 end)
@@ -63,7 +63,7 @@ AddEventHandler('qb-tow:server:11101110', function(drops)
 
     Player.Functions.AddJobReputation(1)
     Player.Functions.AddMoney("bank", payment, "tow-salary")
-    TriggerClientEvent('chatMessage', source, "BAAN", "warning", "You Received Your Salary From: $"..payment..", stupid: $"..price.." (From What $"..bonus.." bonus) in $"..taxAmount.." tax ("..PaymentTax.."%)")
+    TriggerClientEvent('chatMessage', source, "JOB", "warning", "You Received Your Salary From: $"..payment..", Gross: $"..price.." (From What $"..bonus.." Bonus) In $"..taxAmount.." Tax ("..PaymentTax.."%)")
 end)
 
 QBCore.Commands.Add("npc", "Toggle Npc Job", {}, false, function(source, args)
@@ -76,4 +76,3 @@ QBCore.Commands.Add("tow", "Place A Car On The Back Of Your Flatbed", {}, false,
         TriggerClientEvent("qb-tow:client:TowVehicle", source)
     end
 end)
-
