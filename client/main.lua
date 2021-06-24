@@ -1,12 +1,9 @@
 QBCore = nil
 
 Citizen.CreateThread(function()
-    while true do
-        Citizen.Wait(10)
-        if QBCore == nil then
-            TriggerEvent('QBCore:GetObject', function(obj) QBCore = obj end)
-            Citizen.Wait(200)
-        end
+    while QBCore == nil do
+	TriggerEvent('QBCore:GetObject', function(obj) QBCore = obj end)
+	Citizen.Wait(200)
     end
 end)
 
@@ -334,7 +331,7 @@ AddEventHandler('qb-tow:client:SpawnVehicle', function()
     local coords = Config.Locations["vehicle"].coords
     QBCore.Functions.SpawnVehicle(vehicleInfo, function(veh)
         SetVehicleNumberPlateText(veh, "TOWR"..tostring(math.random(1000, 9999)))
-        SetEntityHeading(veh, coords.h)
+        SetEntityHeading(veh, coords.w)
         exports['LegacyFuel']:SetFuel(veh, 100.0)
         SetEntityAsMissionEntity(veh, true, true)
         closeMenuFull()
