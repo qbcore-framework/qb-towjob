@@ -1,4 +1,4 @@
-isLoggedIn = false
+local isLoggedIn = false
 local PlayerJob = {}
 local CurrentPlate = nil
 local JobsDone = 0
@@ -7,7 +7,6 @@ local CurrentLocation = {}
 local CurrentBlip = nil
 local LastVehicle = 0
 local VehicleSpawned = false
-
 local selectedVeh = nil
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded')
@@ -50,8 +49,8 @@ AddEventHandler('QBCore:Client:OnJobUpdate', function(JobInfo)
     end
 end)
 
-RegisterNetEvent('jobs:client:ToggleNpc')
-AddEventHandler('jobs:client:ToggleNpc', function()
+RegisterNetEvent('qb-tow:client:ToggleNpc')
+AddEventHandler('qb-tow:client:ToggleNpc', function()
     if QBCore.Functions.GetPlayerData().job.name == "tow" then
         if CurrentTow ~= nil then 
             QBCore.Functions.Notify("First Finish Your Work", "error")
