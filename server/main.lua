@@ -64,7 +64,7 @@ AddEventHandler('qb-tow:server:11101110', function(drops)
 end)
 
 QBCore.Commands.Add("npc", "Toggle Npc Job", {}, false, function(source, args)
-	TriggerClientEvent("jobs:client:ToggleNpc", source)
+	TriggerClientEvent("qb-tow:client:ToggleNpc", source)
 end)
 
 QBCore.Commands.Add("tow", "Place A Car On The Back Of Your Flatbed", {}, false, function(source, args)
