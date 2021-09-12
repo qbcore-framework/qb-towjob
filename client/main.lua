@@ -1,4 +1,4 @@
-isLoggedIn = false
+local isLoggedIn = false
 local PlayerJob = {}
 local CurrentPlate = nil
 local JobsDone = 0
@@ -7,7 +7,6 @@ local CurrentLocation = {}
 local CurrentBlip = nil
 local LastVehicle = 0
 local VehicleSpawned = false
-
 local selectedVeh = nil
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded')
