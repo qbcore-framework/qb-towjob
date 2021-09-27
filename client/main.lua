@@ -172,6 +172,7 @@ AddEventHandler('qb-tow:client:TowVehicle', function()
 end)
 
 Citizen.CreateThread(function()
+if PlayerJob.name == "tow" then
     local TowBlip = AddBlipForCoord(Config.Locations["main"].coords.x, Config.Locations["main"].coords.y, Config.Locations["main"].coords.z)
     SetBlipSprite(TowBlip, 477)
     SetBlipDisplay(TowBlip, 4)
@@ -181,6 +182,7 @@ Citizen.CreateThread(function()
     BeginTextCommandSetBlipName("STRING")
     AddTextComponentSubstringPlayerName(Config.Locations["main"].label)
     EndTextCommandSetBlipName(TowBlip)
+end
     while true do 
         Citizen.Wait(1)
         if isLoggedIn and QBCore ~= nil then
