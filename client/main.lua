@@ -15,6 +15,16 @@ AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
     PlayerJob = QBCore.Functions.GetPlayerData().job
 
     if PlayerJob.name == "tow" then
+        local TowBlip = AddBlipForCoord(Config.Locations["main"].coords.x, Config.Locations["main"].coords.y, Config.Locations["main"].coords.z)
+        SetBlipSprite(TowBlip, 477)
+        SetBlipDisplay(TowBlip, 4)
+        SetBlipScale(TowBlip, 0.6)
+        SetBlipAsShortRange(TowBlip, true)
+        SetBlipColour(TowBlip, 15)
+        BeginTextCommandSetBlipName("STRING")
+        AddTextComponentSubstringPlayerName(Config.Locations["main"].label)
+        EndTextCommandSetBlipName(TowBlip)
+
         local TowVehBlip = AddBlipForCoord(Config.Locations["vehicle"].coords.x, Config.Locations["vehicle"].coords.y, Config.Locations["vehicle"].coords.z)
         SetBlipSprite(TowVehBlip, 326)
         SetBlipDisplay(TowVehBlip, 4)
@@ -37,6 +47,16 @@ AddEventHandler('QBCore:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
 
     if PlayerJob.name == "tow" then
+        local TowBlip = AddBlipForCoord(Config.Locations["main"].coords.x, Config.Locations["main"].coords.y, Config.Locations["main"].coords.z)
+        SetBlipSprite(TowBlip, 477)
+        SetBlipDisplay(TowBlip, 4)
+        SetBlipScale(TowBlip, 0.6)
+        SetBlipAsShortRange(TowBlip, true)
+        SetBlipColour(TowBlip, 15)
+        BeginTextCommandSetBlipName("STRING")
+        AddTextComponentSubstringPlayerName(Config.Locations["main"].label)
+        EndTextCommandSetBlipName(TowBlip)
+        
         local TowVehBlip = AddBlipForCoord(Config.Locations["vehicle"].coords.x, Config.Locations["vehicle"].coords.y, Config.Locations["vehicle"].coords.z)
         SetBlipSprite(TowVehBlip, 326)
         SetBlipDisplay(TowVehBlip, 4)
@@ -172,15 +192,6 @@ AddEventHandler('qb-tow:client:TowVehicle', function()
 end)
 
 Citizen.CreateThread(function()
-    local TowBlip = AddBlipForCoord(Config.Locations["main"].coords.x, Config.Locations["main"].coords.y, Config.Locations["main"].coords.z)
-    SetBlipSprite(TowBlip, 477)
-    SetBlipDisplay(TowBlip, 4)
-    SetBlipScale(TowBlip, 0.6)
-    SetBlipAsShortRange(TowBlip, true)
-    SetBlipColour(TowBlip, 15)
-    BeginTextCommandSetBlipName("STRING")
-    AddTextComponentSubstringPlayerName(Config.Locations["main"].label)
-    EndTextCommandSetBlipName(TowBlip)
     while true do 
         Citizen.Wait(1)
         if isLoggedIn and QBCore ~= nil then
