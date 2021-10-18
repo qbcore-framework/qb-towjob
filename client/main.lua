@@ -1,3 +1,5 @@
+local QBCore = exports['qb-core']:GetCoreObject()
+
 local isLoggedIn = false
 local PlayerJob = {}
 local CurrentPlate = nil
