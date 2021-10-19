@@ -1,3 +1,5 @@
+local QBCore = exports['qb-core']:GetCoreObject()
+
 local PaymentTax = 15
 local Bail = {}
 
