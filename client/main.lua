@@ -122,6 +122,7 @@ AddEventHandler('qb-tow:client:TowVehicle', function()
             end
             if not IsPedInAnyVehicle(PlayerPedId()) then
                 if vehicle ~= targetVehicle then
+                    NetworkRequestControlOfEntity(targetVehicle)
                     local towPos = GetEntityCoords(vehicle)
                     local targetPos = GetEntityCoords(targetVehicle)
                     if #(towPos - targetPos) < 11.0 then
