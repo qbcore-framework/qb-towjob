@@ -58,7 +58,7 @@ AddEventHandler('QBCore:Client:OnJobUpdate', function(JobInfo)
         BeginTextCommandSetBlipName("STRING")
         AddTextComponentSubstringPlayerName(Config.Locations["main"].label)
         EndTextCommandSetBlipName(TowBlip)
-        
+
         local TowVehBlip = AddBlipForCoord(Config.Locations["vehicle"].coords.x, Config.Locations["vehicle"].coords.y, Config.Locations["vehicle"].coords.z)
         SetBlipSprite(TowVehBlip, 326)
         SetBlipDisplay(TowVehBlip, 4)
@@ -74,7 +74,7 @@ end)
 RegisterNetEvent('jobs:client:ToggleNpc')
 AddEventHandler('jobs:client:ToggleNpc', function()
     if QBCore.Functions.GetPlayerData().job.name == "tow" then
-        if CurrentTow ~= nil then 
+        if CurrentTow ~= nil then
             QBCore.Functions.Notify("First Finish Your Work", "error")
             return
         end
@@ -106,9 +106,9 @@ RegisterNetEvent('qb-tow:client:TowVehicle')
 AddEventHandler('qb-tow:client:TowVehicle', function()
     local vehicle = GetVehiclePedIsIn(PlayerPedId(), true)
     if isTowVehicle(vehicle) then
-        if CurrentTow == nil then 
+        if CurrentTow == nil then
             --[[ Replaced "QBCore.Functions.GetClosestVehicle()" with custom implementation "getVehicleInDirection"
-                 QBCore native could not return polcice and other vehicles types (NPC) ]] 
+                 QBCore native could not return polcice and other vehicles types (NPC) ]]
             local playerped = PlayerPedId()
             local coordA = GetEntityCoords(playerped, 1)
             local coordB = GetOffsetFromEntityInWorldCoords(playerped, 0.0, 5.0, 0.0)
@@ -195,7 +195,7 @@ AddEventHandler('qb-tow:client:TowVehicle', function()
 end)
 
 Citizen.CreateThread(function()
-    while true do 
+    while true do
         Citizen.Wait(1)
         if isLoggedIn and QBCore ~= nil then
             if PlayerJob.name == "tow" then
@@ -218,9 +218,9 @@ Citizen.CreateThread(function()
                             end
                         end
                         Menu.renderGUI()
-                    end 
+                    end
                 end
-    
+
                 if #(pos - vector3(Config.Locations["main"].coords.x, Config.Locations["main"].coords.y, Config.Locations["main"].coords.z)) < 4.5 then
                     if #(pos - vector3(Config.Locations["main"].coords.x, Config.Locations["main"].coords.y, Config.Locations["main"].coords.z)) < 1.5 then
                         DrawText3D(Config.Locations["main"].coords.x, Config.Locations["main"].coords.y, Config.Locations["main"].coords.z, "~g~E~w~ - Payslip")
@@ -236,7 +236,7 @@ Citizen.CreateThread(function()
                         end
                     elseif #(pos - vector3(Config.Locations["main"].coords.x, Config.Locations["main"].coords.y, Config.Locations["main"].coords.z)) < 2.5 then
                         DrawText3D(Config.Locations["main"].coords.x, Config.Locations["main"].coords.y, Config.Locations["main"].coords.z, "Payslip")
-                    end  
+                    end
                 end
 
                 if NpcOn and CurrentLocation ~= nil and next(CurrentLocation) ~= nil then
@@ -310,7 +310,7 @@ function MenuGarage()
     MenuTitle = "Garage"
     ClearMenu()
     Menu.addButton("Vehicles", "VehicleList", nil)
-    Menu.addButton("Close Menu", "closeMenuFull", nil) 
+    Menu.addButton("Close Menu", "closeMenuFull", nil)
 end
 
 function VehicleList(isDown)
@@ -320,7 +320,7 @@ function VehicleList(isDown)
     for k, v in pairs(Config.Vehicles) do
         Menu.addButton(Config.Vehicles[k], "TakeOutVehicle", k, "Garage", " Motor: 100%", " Body: 100%", " Fuel: 100%")
     end
-        
+
     Menu.addButton("Back", "MenuGarage",nil)
 end
 
@@ -340,10 +340,10 @@ AddEventHandler('qb-tow:client:SpawnVehicle', function()
         SetEntityAsMissionEntity(veh, true, true)
         closeMenuFull()
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-        TriggerEvent("vehiclekeys:client:SetOwner", GetVehicleNumberPlateText(veh))
+        TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
         SetVehicleEngineOn(veh, true, true)
-        CurrentPlate = GetVehicleNumberPlateText(veh)
-        for i = 1, 9, 1 do 
+        CurrentPlate = QBCore.Functions.GetPlate(veh)
+        for i = 1, 9, 1 do
             SetVehicleExtra(veh, i, 0)
         end
     end, coords, true)
@@ -373,13 +373,13 @@ end
 function doCarDamage(currentVehicle)
 	smash = false
 	damageOutside = false
-	damageOutside2 = false 
+	damageOutside2 = false
 	local engine = 199.0
 	local body = 149.0
 	if engine < 200.0 then
 		engine = 200.0
     end
-    
+
     if engine  > 1000.0 then
         engine = 950.0
     end
