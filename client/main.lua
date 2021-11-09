@@ -11,8 +11,7 @@ local LastVehicle = 0
 local VehicleSpawned = false
 local selectedVeh = nil
 
-RegisterNetEvent('QBCore:Client:OnPlayerLoaded')
-AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
+RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     isLoggedIn = true
     PlayerJob = QBCore.Functions.GetPlayerData().job
 
@@ -39,13 +38,11 @@ AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
     end
 end)
 
-RegisterNetEvent('QBCore:Client:OnPlayerUnload')
-AddEventHandler('QBCore:Client:OnPlayerUnload', function()
+RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
     isLoggedIn = false
 end)
 
-RegisterNetEvent('QBCore:Client:OnJobUpdate')
-AddEventHandler('QBCore:Client:OnJobUpdate', function(JobInfo)
+RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
 
     if PlayerJob.name == "tow" then
@@ -71,8 +68,7 @@ AddEventHandler('QBCore:Client:OnJobUpdate', function(JobInfo)
     end
 end)
 
-RegisterNetEvent('jobs:client:ToggleNpc')
-AddEventHandler('jobs:client:ToggleNpc', function()
+RegisterNetEvent('jobs:client:ToggleNpc', function()
     if QBCore.Functions.GetPlayerData().job.name == "tow" then
         if CurrentTow ~= nil then
             QBCore.Functions.Notify("First Finish Your Work", "error")
@@ -102,8 +98,7 @@ AddEventHandler('jobs:client:ToggleNpc', function()
     end
 end)
 
-RegisterNetEvent('qb-tow:client:TowVehicle')
-AddEventHandler('qb-tow:client:TowVehicle', function()
+RegisterNetEvent('qb-tow:client:TowVehicle', function()
     local vehicle = GetVehiclePedIsIn(PlayerPedId(), true)
     if isTowVehicle(vehicle) then
         if CurrentTow == nil then
@@ -173,7 +168,7 @@ AddEventHandler('qb-tow:client:TowVehicle', function()
             }, {}, {}, function() -- Done
                 StopAnimTask(PlayerPedId(), "mini@repair", "fixing_a_ped", 1.0)
                 FreezeEntityPosition(CurrentTow, false)
-                Citizen.Wait(250)
+                Wait(250)
                 AttachEntityToEntity(CurrentTow, vehicle, 20, -0.0, -15.0, 1.0, 0.0, 0.0, 0.0, false, false, false, false, 20, true)
                 DetachEntity(CurrentTow, true, true)
                 if NpcOn then
@@ -194,9 +189,9 @@ AddEventHandler('qb-tow:client:TowVehicle', function()
     end
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
-        Citizen.Wait(1)
+        Wait(1)
         if isLoggedIn and QBCore ~= nil then
             if PlayerJob.name == "tow" then
                 local pos = GetEntityCoords(PlayerPedId())
@@ -251,10 +246,10 @@ Citizen.CreateThread(function()
                     end
                 end
             else
-                Citizen.Wait(1000)
+                Wait(1000)
             end
         else
-            Citizen.Wait(1000)
+            Wait(1000)
         end
     end
 end)
@@ -289,7 +284,7 @@ end
 function getRandomVehicleLocation()
     local randomVehicle = math.random(1, #Config.Locations["towspots"])
     while (randomVehicle == LastVehicle) do
-        Citizen.Wait(10)
+        Wait(10)
         randomVehicle = math.random(1, #Config.Locations["towspots"])
     end
     return randomVehicle
@@ -329,8 +324,7 @@ function TakeOutVehicle(vehicleInfo)
     selectedVeh = vehicleInfo
 end
 
-RegisterNetEvent('qb-tow:client:SpawnVehicle')
-AddEventHandler('qb-tow:client:SpawnVehicle', function()
+RegisterNetEvent('qb-tow:client:SpawnVehicle', function()
     local vehicleInfo = selectedVeh
     local coords = Config.Locations["vehicle"].coords
     QBCore.Functions.SpawnVehicle(vehicleInfo, function(veh)
@@ -399,7 +393,7 @@ function doCarDamage(currentVehicle)
 		damageOutside2 = true
 	end
 
-    Citizen.Wait(100)
+    Wait(100)
     SetVehicleEngineHealth(currentVehicle, engine)
 	if smash then
 		SmashVehicleWindow(currentVehicle, 0)
