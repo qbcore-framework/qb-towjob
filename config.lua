@@ -2,6 +2,10 @@ Config = {}
 
 Config.BailPrice = 250
 
+Config.Vehicles = {
+    ["flatbed"] = "Flatbed",
+}
+
 Config.Locations = {
     ["main"] = {
         label = "Towing HQ",
@@ -12,15 +16,15 @@ Config.Locations = {
         coords = vector4(489.65, -1331.82, 29.33, 306.5),
     },
     ["towspots"] = {
-        [1] = {model = "sultanrs", coords = vector3(-2480.8720703125, -211.96409606934, 17.397672653198)},
-        [2] = {model = "zion", coords = vector3(-2723.392578125, 13.207388877869, 15.12806892395)},
-        [3] = {model = "oracle", coords = vector3(-3169.6235351563, 976.18127441406, 15.038360595703)},
-        [4] = {model = "chino", coords = vector3(-3139.7568359375, 1078.7182617188, 20.189767837524)},
-        [5] = {model = "baller2", coords = vector3(-1656.9357910156, -246.16479492188, 54.510955810547)},
-        [6] = {model = "stanier", coords = vector3(-1586.6560058594, -647.56115722656, 29.441320419312)},
-        [7] = {model = "washington", coords = vector3(-1036.1470947266, -491.05856323242, 36.214912414551)},
-        [8] = {model = "buffalo", coords = vector3(-1029.1884765625, -475.53167724609, 36.416831970215)},
-        [9] = {model = "feltzer2", coords = vector3(75.212287902832, 164.8522644043, 104.69123077393)},
+        [1] =  {model = "sultanrs", coords = vector3(-2480.8720703125, -211.96409606934, 17.397672653198)},
+        [2] =  {model = "zion", coords = vector3(-2723.392578125, 13.207388877869, 15.12806892395)},
+        [3] =  {model = "oracle", coords = vector3(-3169.6235351563, 976.18127441406, 15.038360595703)},
+        [4] =  {model = "chino", coords = vector3(-3139.7568359375, 1078.7182617188, 20.189767837524)},
+        [5] =  {model = "baller2", coords = vector3(-1656.9357910156, -246.16479492188, 54.510955810547)},
+        [6] =  {model = "stanier", coords = vector3(-1586.6560058594, -647.56115722656, 29.441320419312)},
+        [7] =  {model = "washington", coords = vector3(-1036.1470947266, -491.05856323242, 36.214912414551)},
+        [8] =  {model = "buffalo", coords = vector3(-1029.1884765625, -475.53167724609, 36.416831970215)},
+        [9] =  {model = "feltzer2", coords = vector3(75.212287902832, 164.8522644043, 104.69123077393)},
         [10] = {model = "asea", coords = vector3(-534.60491943359, -756.71801757813, 31.599143981934)},
         [11] = {model = "fq2", coords = vector3(487.24212646484, -30.827201843262, 88.856712341309)},
         [12] = {model = "jackal", coords = vector3(-772.20111083984, -1281.8114013672, 4.5642876625061)},
@@ -53,8 +57,4 @@ Config.Locations = {
         [39] = {model = "washington", coords = vector3(-451.08666992188, -333.52026367188, 34.021533966064)},
         [40] = {model = "baller2", coords = vector3(322.36480712891, -1900.4990234375, 25.773607254028)},
     }
-}
-
-Config.Vehicles = {
-    ["flatbed"] = "Flatbed",
 }
