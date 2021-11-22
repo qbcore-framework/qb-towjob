@@ -7,6 +7,7 @@ local CurrentBlip = nil
 local LastVehicle = 0
 local VehicleSpawned = false
 local selectedVeh = nil
+local ranWorkThread = false
 
 -- Functions
 
@@ -72,9 +73,9 @@ local function DrawText3D(x, y, z, text)
 end
 
 local function doCarDamage(currentVehicle)
-	smash = false
-	damageOutside = false
-	damageOutside2 = false
+	local smash = false
+	local damageOutside = false
+	local damageOutside2 = false
 	local engine = 199.0
 	local body = 149.0
 	if engine < 200.0 then
@@ -127,32 +128,38 @@ end
 
 -- Old Menu Code (being removed)
 
-function MenuGarage()
-    MenuTitle = "Garage"
-    ClearMenu()
-    Menu.addButton("Vehicles", "VehicleList", nil)
-    Menu.addButton("Close Menu", "closeMenuFull", nil)
-end
-
-function VehicleList(isDown)
-    MenuTitle = "Vehicles:"
-    ClearMenu()
+local function MenuGarage()
+    local towMenu = {
+        {
+            header = "Available Trucks",
+            isMenuHeader = true
+        }
+    }
     for k, v in pairs(Config.Vehicles) do
-        Menu.addButton(Config.Vehicles[k], "TakeOutVehicle", k, "Garage", " Motor: 100%", " Body: 100%", " Fuel: 100%")
+        towMenu[#towMenu+1] = {
+            header = Config.Vehicles[k],
+            params = {
+                event = "qb-tow:client:TakeOutVehicle",
+                args = {
+                    vehicle = k
+                }
+            }
+        }
     end
 
-    Menu.addButton("Back", "MenuGarage",nil)
+    towMenu[#towMenu+1] = {
+        header = "⬅ Close Menu",
+        txt = "",
+        params = {
+            event = "qb-menu:client:closeMenu"
+        }
+
+    }
+    exports['qb-menu']:openMenu(towMenu)
 end
 
-function TakeOutVehicle(vehicleInfo)
-    TriggerServerEvent('qb-tow:server:DoBail', true, vehicleInfo)
-    selectedVeh = vehicleInfo
-end
-
-function closeMenuFull()
-    Menu.hidden = true
-    currentGarage = nil
-    ClearMenu()
+local function CloseMenuFull()
+    exports['qb-menu']:closeMenu()
 end
 
 -- Events
@@ -165,7 +172,7 @@ RegisterNetEvent('qb-tow:client:SpawnVehicle', function()
         SetEntityHeading(veh, coords.w)
         exports['LegacyFuel']:SetFuel(veh, 100.0)
         SetEntityAsMissionEntity(veh, true, true)
-        closeMenuFull()
+        CloseMenuFull()
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
         TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
         SetVehicleEngineOn(veh, true, true)
@@ -198,6 +205,8 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
         BeginTextCommandSetBlipName("STRING")
         AddTextComponentSubstringPlayerName(Config.Locations["vehicle"].label)
         EndTextCommandSetBlipName(TowVehBlip)
+
+        RunWorkThread()
     end
 end)
 
@@ -224,6 +233,8 @@ RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
         BeginTextCommandSetBlipName("STRING")
         AddTextComponentSubstringPlayerName(Config.Locations["vehicle"].label)
         EndTextCommandSetBlipName(TowVehBlip)
+
+        RunWorkThread()
     end
 end)
 
@@ -346,38 +357,94 @@ RegisterNetEvent('qb-tow:client:TowVehicle', function()
     end
 end)
 
--- Threads
+RegisterNetEvent('qb-tow:client:TakeOutVehicle', function(data)
+    local coords = Config.Locations["vehicle"].coords
+    coords = vector3(coords.x, coords.y, coords.z)
+    local ped = PlayerPedId()
+    local pos = GetEntityCoords(ped)
+    if #(pos - coords) <= 5 then
+        local vehicleInfo = data.vehicle
+        TriggerServerEvent('qb-tow:server:DoBail', true, vehicleInfo)
+        selectedVeh = vehicleInfo
+    else
+        QBCore.Functions.Notify('You are too far away', 'error')
+    end
+end)
 
-CreateThread(function()
-    while true do
-        Wait(1)
-        if LocalPlayer.state.isLoggedIn then
-            if PlayerJob.name == "tow" then
+RegisterNetEvent('qb-tow:client:SelectVehicle', function()
+    local coords = Config.Locations["vehicle"].coords
+    coords = vector3(coords.x, coords.y, coords.z)
+    local ped = PlayerPedId()
+    local pos = GetEntityCoords(ped)
+
+    if #(pos - coords) <= 5 then
+        MenuGarage()
+    else
+        QBCore.Functions.Notify('You are too far away', 'error')
+    end
+end)
+
+-- Threads
+function RunWorkThread()
+    if not ranWorkThread then
+        ranWorkThread = true
+
+        CreateThread(function()
+            local shownHeader = false
+
+            while LocalPlayer.state.isLoggedIn and PlayerJob.name == "tow" do
+                local sleep = 1000
                 local pos = GetEntityCoords(PlayerPedId())
-                if #(pos - vector3(Config.Locations["vehicle"].coords.x, Config.Locations["vehicle"].coords.y, Config.Locations["vehicle"].coords.z)) < 10.0 then
-                    DrawMarker(2, Config.Locations["vehicle"].coords.x, Config.Locations["vehicle"].coords.y, Config.Locations["vehicle"].coords.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 200, 200, 222, false, false, false, true, false, false, false)
-                    if #(pos - vector3(Config.Locations["vehicle"].coords.x, Config.Locations["vehicle"].coords.y, Config.Locations["vehicle"].coords.z)) < 1.5 then
+                local vehicleCoords = vector3(Config.Locations["vehicle"].coords.x, Config.Locations["vehicle"].coords.y, Config.Locations["vehicle"].coords.z)
+                local mainCoords = vector3(Config.Locations["main"].coords.x, Config.Locations["main"].coords.y, Config.Locations["main"].coords.z)
+
+                if #(pos - vehicleCoords) <= 5 then
+                    local x = vehicleCoords.x
+                    local y = vehicleCoords.y
+                    local z = vehicleCoords.z
+
+                    DrawMarker(2, x,y,z , 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 200, 200, 222, false, false, false, true, false, false, false)
+                    if #(pos - vehicleCoords) < 1.5 then
                         if IsPedInAnyVehicle(PlayerPedId(), false) then
-                            DrawText3D(Config.Locations["vehicle"].coords.x, Config.Locations["vehicle"].coords.y, Config.Locations["vehicle"].coords.z, "~g~E~w~ - Store The Vehicle")
+                            DrawText3D(x,y,z, "~g~E~w~ - Store Vehicle")
                         else
-                            DrawText3D(Config.Locations["vehicle"].coords.x, Config.Locations["vehicle"].coords.y, Config.Locations["vehicle"].coords.z, "~g~E~w~ - Vehicles")
+                            if not shownHeader then
+                                shownHeader = true
+                                exports['qb-menu']:showHeader({
+                                    {
+                                        header = "Select Vehicle",
+                                        params = {
+                                            event = 'qb-tow:client:SelectVehicle',
+                                            args = {}
+                                        },
+                                    }
+                                })
+                            end
+
                         end
+
                         if IsControlJustReleased(0, 38) then
                             if IsPedInAnyVehicle(PlayerPedId(), false) then
                                 DeleteVehicle(GetVehiclePedIsIn(PlayerPedId()))
                                 TriggerServerEvent('qb-tow:server:DoBail', false)
-                            else
-                                MenuGarage()
-                                Menu.hidden = not Menu.hidden
                             end
                         end
-                        Menu.renderGUI()
+                    end
+                    sleep = 5
+                else
+                    if shownHeader then
+                        shownHeader = false
+                        exports['qb-menu']:closeMenu()
                     end
                 end
 
-                if #(pos - vector3(Config.Locations["main"].coords.x, Config.Locations["main"].coords.y, Config.Locations["main"].coords.z)) < 4.5 then
-                    if #(pos - vector3(Config.Locations["main"].coords.x, Config.Locations["main"].coords.y, Config.Locations["main"].coords.z)) < 1.5 then
-                        DrawText3D(Config.Locations["main"].coords.x, Config.Locations["main"].coords.y, Config.Locations["main"].coords.z, "~g~E~w~ - Payslip")
+                if #(pos - mainCoords) < 4.5 then
+                    if #(pos - mainCoords) < 1.5 then
+                        local x = mainCoords.x
+                        local y = mainCoords.y
+                        local z = mainCoords.z
+
+                        DrawText3D(x,y,z, "~g~E~w~ - Payslip")
                         if IsControlJustReleased(0, 38) then
                             if JobsDone > 0 then
                                 RemoveBlip(CurrentBlip)
@@ -385,12 +452,16 @@ CreateThread(function()
                                 JobsDone = 0
                                 NpcOn = false
                             else
-                                QBCore.Functions.Notify("You Havent Done Any Work Yet", "error")
+                                QBCore.Functions.Notify("You have not done any work yet.", "error")
                             end
                         end
-                    elseif #(pos - vector3(Config.Locations["main"].coords.x, Config.Locations["main"].coords.y, Config.Locations["main"].coords.z)) < 2.5 then
-                        DrawText3D(Config.Locations["main"].coords.x, Config.Locations["main"].coords.y, Config.Locations["main"].coords.z, "Payslip")
+                    elseif #(pos - mainCoords) < 2.5 then
+                        local x = mainCoords.x
+                        local y = mainCoords.y
+                        local z = mainCoords.z
+                        DrawText3D(x,y,z, "Payslip")
                     end
+                    sleep = 5
                 end
 
                 if NpcOn and CurrentLocation ~= nil and next(CurrentLocation) ~= nil then
@@ -403,12 +474,13 @@ CreateThread(function()
                             end
                         end, CurrentLocation, true)
                     end
+                    sleep = 5
                 end
-            else
-                Wait(1000)
+
+                Wait(sleep)
             end
-        else
-            Wait(1000)
-        end
+        end)
+
+        ranWorkThread = false
     end
-end)
+end
