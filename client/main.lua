@@ -8,6 +8,7 @@ local LastVehicle = 0
 local VehicleSpawned = false
 local selectedVeh = nil
 local ranWorkThread = false
+local showMarker = false
 
 -- Functions
 
@@ -104,7 +105,7 @@ local function CreateZone(type, number)
         size = 50
     end
 
-    if Config.UseTarget and type ~= "towspots"then    
+    if Config.UseTarget and type == "main" then    
         exports['qb-target']:AddBoxZone(boxName, coords, size, size, {
             minZ = coords.z - 5.0,
             maxZ = coords.z + 5.0,
@@ -131,8 +132,8 @@ local function CreateZone(type, number)
                 heading = heading,
             })
     
-        CurrentLocation.zoneCombo = ComboZone:Create({zone}, {name = boxName, debugPoly = false})
-        CurrentLocation.zoneCombo:onPlayerInOut(function(isPointInside)
+        local zoneCombo = ComboZone:Create({zone}, {name = boxName, debugPoly = false})
+        zoneCombo:onPlayerInOut(function(isPointInside)
             if isPointInside then
                 if type == "main" then
                     TriggerEvent('qb-tow:client:PaySlip')
@@ -144,6 +145,27 @@ local function CreateZone(type, number)
             else
             end
         end)
+        if type == "vehicle" then
+            local zoneMark = BoxZone:Create(
+                coords, 20, 20, {
+                    minZ = coords.z - 5.0,
+                    maxZ = coords.z + 5.0,
+                    name = boxName,
+                    debugPoly = false,
+                    heading = heading,
+                })
+        
+            local zoneComboV = ComboZone:Create({zoneMark}, {name = boxName, debugPoly = false})
+            zoneComboV:onPlayerInOut(function(isPointInside)
+                if isPointInside then
+                    TriggerEvent('qb-tow:client:ShowMarker', true)
+                else
+                    TriggerEvent('qb-tow:client:ShowMarker', false)
+                end
+            end)
+        elseif type == "towspots" then
+            CurrentLocation.zoneCombo = zoneCombo
+        end
     end
 end
 
@@ -392,6 +414,21 @@ RegisterNetEvent('qb-tow:client:SpawnNPCVehicle', function()
     end
 end)
 
-
+RegisterNetEvent('qb-tow:client:ShowMarker', function(active)
+    if PlayerJob.name == "tow" then
+        showMarker = active
+    end
+end)
 
 -- Threads
+CreateThread(function()
+    while true do
+        if showMarker then
+            DrawMarker(2, Config.Locations["vehicle"].coords.x, Config.Locations["vehicle"].coords.y, Config.Locations["vehicle"].coords.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
+            --DrawMarker(2, Config.Locations["vehicle"].coords.x, Config.Locations["vehicle"].coords.y, Config.Locations["vehicle"].coords.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 200, 200, 222, false, false, false, true, false, false, false)
+            Wait(0)
+        else
+            Wait(1000)
+        end
+    end
+end)
