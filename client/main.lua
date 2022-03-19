@@ -386,11 +386,15 @@ end)
 
 RegisterNetEvent('qb-tow:client:Vehicle', function()
     local vehicle = GetVehiclePedIsIn(PlayerPedId(), false)
-    if vehicle and isTowVehicle(vehicle) then
-        DeleteVehicle(GetVehiclePedIsIn(PlayerPedId()))
-        TriggerServerEvent('qb-tow:server:DoBail', false)
+    if not CurrentTow then
+        if vehicle and isTowVehicle(vehicle) then
+            DeleteVehicle(GetVehiclePedIsIn(PlayerPedId()))
+            TriggerServerEvent('qb-tow:server:DoBail', false)
+        else
+            MenuGarage()
+        end
     else
-        MenuGarage()
+        QBCore.Functions.Notify(Lang:t("error.finish_work"), "error")
     end
 end)
 
