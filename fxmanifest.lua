@@ -4,8 +4,19 @@ game 'gta5'
 description 'QB-TowJob'
 version '1.1.0'
 
-shared_script 'config.lua'
-client_script 'client/main.lua'
+shared_scripts {
+	'@qb-core/shared/locale.lua',
+	'config.lua',
+	'locales/en.lua',
+}
+
+client_scripts {
+	'@PolyZone/client.lua',
+	'@PolyZone/BoxZone.lua',
+	'@PolyZone/ComboZone.lua',
+    'client/main.lua'
+}
+
 server_script 'server/main.lua'
 
 lua54 'yes'
