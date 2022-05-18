@@ -7,8 +7,9 @@ local CurrentBlip = nil
 local LastVehicle = 0
 local VehicleSpawned = false
 local selectedVeh = nil
-local ranWorkThread = false
 local showMarker = false
+local CurrentBlip2 = nil
+local CurrentTow = nil
 
 -- Functions
 
@@ -24,13 +25,13 @@ end
 
 local function getVehicleInDirection(coordFrom, coordTo)
 	local rayHandle = CastRayPointToPoint(coordFrom.x, coordFrom.y, coordFrom.z, coordTo.x, coordTo.y, coordTo.z, 10, PlayerPedId(), 0)
-	local a, b, c, d, vehicle = GetRaycastResult(rayHandle)
+	local _, _, _, _, vehicle = GetRaycastResult(rayHandle)
 	return vehicle
 end
 
 local function isTowVehicle(vehicle)
     local retval = false
-    for k, v in pairs(Config.Vehicles) do
+    for k in pairs(Config.Vehicles) do
         if GetEntityModel(vehicle) == GetHashKey(k) then
             retval = true
         end
@@ -47,7 +48,7 @@ local function MenuGarage()
             isMenuHeader = true
         }
     }
-    for k, v in pairs(Config.Vehicles) do
+    for k in pairs(Config.Vehicles) do
         towMenu[#towMenu+1] = {
             header = Config.Vehicles[k],
             params = {
@@ -78,34 +79,34 @@ local function CreateZone(type, number)
     local coords
     local heading
     local boxName
-    local event 
+    local event
     local label
     local size
 
     if type == "main" then
         event = "qb-tow:client:PaySlip"
         label = "Payslip"
-        coords = vector3(Config.Locations[type].coords.x, Config.Locations[type].coords.y, Config.Locations[type].coords.z) 
+        coords = vector3(Config.Locations[type].coords.x, Config.Locations[type].coords.y, Config.Locations[type].coords.z)
         heading = Config.Locations[type].coords.h
         boxName = Config.Locations[type].label
         size = 3
     elseif type == "vehicle" then
         event = "qb-tow:client:Vehicle"
         label = "Vehicle"
-        coords = vector3(Config.Locations[type].coords.x, Config.Locations[type].coords.y, Config.Locations[type].coords.z) 
+        coords = vector3(Config.Locations[type].coords.x, Config.Locations[type].coords.y, Config.Locations[type].coords.z)
         heading = Config.Locations[type].coords.h
         boxName = Config.Locations[type].label
         size = 5
     elseif type == "towspots" then
         event = "qb-tow:client:SpawnNPCVehicle"
         label = "NPCZone"
-        coords = vector3(Config.Locations[type][number].coords.x, Config.Locations[type][number].coords.y, Config.Locations[type][number].coords.z) 
+        coords = vector3(Config.Locations[type][number].coords.x, Config.Locations[type][number].coords.y, Config.Locations[type][number].coords.z)
         heading = Config.Locations[type][number].coords.h
         boxName = Config.Locations[type][number].name
         size = 50
     end
 
-    if Config.UseTarget and type == "main" then    
+    if Config.UseTarget and type == "main" then
         exports['qb-target']:AddBoxZone(boxName, coords, size, size, {
             minZ = coords.z - 5.0,
             maxZ = coords.z + 5.0,
@@ -131,7 +132,7 @@ local function CreateZone(type, number)
                 debugPoly = false,
                 heading = heading,
             })
-    
+
         local zoneCombo = ComboZone:Create({zone}, {name = boxName, debugPoly = false})
         zoneCombo:onPlayerInOut(function(isPointInside)
             if isPointInside then
@@ -142,7 +143,6 @@ local function CreateZone(type, number)
                 elseif type == "towspots" then
                     TriggerEvent('qb-tow:client:SpawnNPCVehicle')
                 end
-            else
             end
         end)
         if type == "vehicle" then
@@ -154,7 +154,7 @@ local function CreateZone(type, number)
                     debugPoly = false,
                     heading = heading,
                 })
-        
+
             local zoneComboV = ComboZone:Create({zoneMark}, {name = boxName, debugPoly = false})
             zoneComboV:onPlayerInOut(function(isPointInside)
                 if isPointInside then
@@ -184,7 +184,7 @@ local function deliverVehicle(vehicle)
     CurrentLocation.model = Config.Locations["towspots"][randomLocation].model
     CurrentLocation.id = randomLocation
     CreateZone("towspots", randomLocation)
-    
+
     CurrentBlip = AddBlipForCoord(CurrentLocation.x, CurrentLocation.y, CurrentLocation.z)
     SetBlipColour(CurrentBlip, 3)
     SetBlipRoute(CurrentBlip, true)

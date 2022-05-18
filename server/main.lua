@@ -40,7 +40,7 @@ end)
 RegisterNetEvent('qb-tow:server:11101110', function(drops)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
-    local drops = tonumber(drops)
+    drops = tonumber(drops)
     local bonus = 0
     local DropPrice = math.random(150, 170)
     if drops > 5 then
@@ -63,11 +63,11 @@ RegisterNetEvent('qb-tow:server:11101110', function(drops)
     --TriggerClientEvent('chatMessage', source, "JOB", "warning", "You Received Your Salary From: $"..payment..", Gross: $"..price.." (From What $"..bonus.." Bonus) In $"..taxAmount.." Tax ("..PaymentTax.."%)")
 end)
 
-QBCore.Commands.Add("npc", Lang:t("info.toggle_npc"), {}, false, function(source, args)
+QBCore.Commands.Add("npc", Lang:t("info.toggle_npc"), {}, false, function(source)
 	TriggerClientEvent("jobs:client:ToggleNpc", source)
 end)
 
-QBCore.Commands.Add("tow", Lang:t("info.tow"), {}, false, function(source, args)
+QBCore.Commands.Add("tow", Lang:t("info.tow"), {}, false, function(source)
     local Player = QBCore.Functions.GetPlayer(source)
     if Player.PlayerData.job.name == "tow"  or Player.PlayerData.job.name == "mechanic" then
         TriggerClientEvent("qb-tow:client:TowVehicle", source)
