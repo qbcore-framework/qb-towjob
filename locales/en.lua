@@ -1,11 +1,11 @@
 local Translations = {
     error = {
-        finish_work = "First Finish Your Work",
+        finish_work = "Finish All Of Your Work First",
         vehicle_not_correct = "This Is Not The Right Vehicle",
-        failed = "Failed",
-        not_towing_vehicle = "You Must Have Been In A Towing Vehicle First",
-        too_far_away = 'You are too far away',
-        no_work_done = "You have not done any work yet.",
+        failed = "You Have Failed",
+        not_towing_vehicle = "You Must Be In Your Towing Vehicle",
+        too_far_away = "You are too far away",
+        no_work_done = "You have not done any work yet",
         no_deposit = "$%{value} Deposit Required",
     },
     success = {
