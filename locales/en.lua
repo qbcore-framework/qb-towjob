@@ -6,7 +6,7 @@ local Translations = {
         not_towing_vehicle = "You Must Be In Your Towing Vehicle",
         too_far_away = "You Are Too Far Away",
         no_work_done = "You Have Not Done Any Work Yet",
-        no_deposit = "$%{value} Deposit Required",
+        no_deposit = "$%{value} Deposit required",
     },
     success = {
         paid_with_cash = "$%{value} Deposit Paid With Cash",
