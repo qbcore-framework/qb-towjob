@@ -1,7 +1,7 @@
 local Translations = {
     error = {
         finish_work = "Finish all of your work first",
-        vehicle_not_correct = "This Is Not The Right Vehicle",
+        vehicle_not_correct = "This is not the right Vehicle",
         failed = "You Have Failed",
         not_towing_vehicle = "You Must Be In Your Towing Vehicle",
         too_far_away = "You Are Too Far Away",
