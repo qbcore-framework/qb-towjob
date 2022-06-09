@@ -5,7 +5,7 @@ local Translations = {
         failed = "You Have Failed",
         not_towing_vehicle = "You Must Be In Your Towing Vehicle",
         too_far_away = "You Are Too Far Away",
-        no_work_done = "You Have Not Done Any Work Yet",
+        no_work_done = "You have not done any work yet",
         no_deposit = "$%{value} Deposit required",
     },
     success = {
