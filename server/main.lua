@@ -28,18 +28,37 @@ RegisterNetEvent('qb-tow:server:DoBail', function(bool, vehInfo)
     end
 end)
 
-RegisterNetEvent('qb-tow:server:nano', function()
+RegisterNetEvent('qb-tow:server:nano', function(targetVehicle)
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    if not Player then return end
+
+    local playerPed = GetPlayerPed(src)
+    local playerVehicle = GetVehiclePedIsIn(playerPed, false)
+    local playerVehicleCoords = GetEntityCoords(playerVehicle)
+    local targetVehicleCoords = GetEntityCoords(targetVehicle)
+    if Player.PlayerData.job.name ~= "tow" or #(playerVehicleCoords - targetVehicleCoords) > 11.0 then
+        return DropPlayer(src, "Attempted exploit abuse")
+    end
+
     local chance = math.random(1,100)
     if chance < 26 then
-        local xPlayer = QBCore.Functions.GetPlayer(tonumber(source))
-        xPlayer.Functions.AddItem("cryptostick", 1, false)
-        TriggerClientEvent('inventory:client:ItemBox', source, QBCore.Shared.Items["cryptostick"], "add")
+        Player.Functions.AddItem("cryptostick", 1, false)
+        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items["cryptostick"], "add")
     end
 end)
 
 RegisterNetEvent('qb-tow:server:11101110', function(drops)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
+    if not Player then return end
+
+    local playerPed = GetPlayerPed(src)
+    local playerCoords = GetEntityCoords(playerPed)
+    if Player.PlayerData.job.name ~= "tow" or #(playerCoords - vector3(Config.Locations["main"].coords.x, Config.Locations["main"].coords.y, Config.Locations["main"].coords.z)) > 6.0 then
+        return DropPlayer(src, "Attempted exploit abuse")
+    end
+
     drops = tonumber(drops)
     local bonus = 0
     local DropPrice = math.random(150, 170)
@@ -59,8 +78,6 @@ RegisterNetEvent('qb-tow:server:11101110', function(drops)
     Player.Functions.AddJobReputation(1)
     Player.Functions.AddMoney("bank", payment, "tow-salary")
     TriggerClientEvent('QBCore:Notify', src, Lang:t("success.you_earned", {value = payment}), 'success')
-
-    --TriggerClientEvent('chatMessage', source, "JOB", "warning", "You Received Your Salary From: $"..payment..", Gross: $"..price.." (From What $"..bonus.." Bonus) In $"..taxAmount.." Tax ("..PaymentTax.."%)")
 end)
 
 QBCore.Commands.Add("npc", Lang:t("info.toggle_npc"), {}, false, function(source)
