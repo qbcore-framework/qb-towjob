@@ -1,5 +1,4 @@
 local QBCore = exports['qb-core']:GetCoreObject()
-local PlayerData = QBCore.Functions.GetPlayerData()
 local JobsDone = 0
 local NpcOn = false
 local CurrentLocation = {}
