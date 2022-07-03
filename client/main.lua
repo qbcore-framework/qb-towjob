@@ -324,7 +324,7 @@ RegisterNetEvent('qb-tow:client:TowVehicle', function()
                                 SetBlipColour(CurrentBlip2, 3)
                                 SetBlipRoute(CurrentBlip2, true)
                                 SetBlipRouteColour(CurrentBlip2, 3)
-                                TriggerServerEvent('qb-tow:server:nano')
+                                TriggerServerEvent('qb-tow:server:nano', targetPos)
                                 --remove zone
                                 CurrentLocation.zoneCombo:destroy()
                             end
@@ -335,6 +335,8 @@ RegisterNetEvent('qb-tow:client:TowVehicle', function()
                         end)
                     end
                 end
+            else
+                QBCore.Functions.Notify("You must be out of the vehicle", "primary", 5000)
             end
         else
             QBCore.Functions.Progressbar("untowing_vehicle", Lang:t("mission.untowing_vehicle"), 5000, false, true, {

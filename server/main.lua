@@ -28,15 +28,15 @@ RegisterNetEvent('qb-tow:server:DoBail', function(bool, vehInfo)
     end
 end)
 
-RegisterNetEvent('qb-tow:server:nano', function(targetVehicle)
+RegisterNetEvent('qb-tow:server:nano', function(targetPos)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     if not Player then return end
 
     local playerPed = GetPlayerPed(src)
-    local playerVehicle = GetVehiclePedIsIn(playerPed, false)
+    local playerVehicle = GetVehiclePedIsIn(playerPed, true)
     local playerVehicleCoords = GetEntityCoords(playerVehicle)
-    local targetVehicleCoords = GetEntityCoords(targetVehicle)
+    local targetVehicleCoords = targetPos
     if Player.PlayerData.job.name ~= "tow" or #(playerVehicleCoords - targetVehicleCoords) > 11.0 then
         return DropPlayer(src, "Attempted exploit abuse")
     end
