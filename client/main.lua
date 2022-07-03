@@ -1,5 +1,5 @@
 local QBCore = exports['qb-core']:GetCoreObject()
-local PlayerJob = QBCore.Functions.GetPlayerData().job
+local PlayerData = QBCore.Functions.GetPlayerData()
 local JobsDone = 0
 local NpcOn = false
 local CurrentLocation = {}
@@ -435,8 +435,4 @@ CreateThread(function()
             Wait(1000)
         end
     end
-end)
-
-CreateThread(function()
-    CreateElements()
 end)

@@ -38,8 +38,7 @@ RegisterNetEvent('qb-tow:server:nano', function(targetVehicle)
     local playerVehicleCoords = GetEntityCoords(playerVehicle)
     local targetVehicleCoords = GetEntityCoords(targetVehicle)
     if Player.PlayerData.job.name ~= "tow" or #(playerVehicleCoords - targetVehicleCoords) > 11.0 then
-        -- return DropPlayer(src, "Attempted exploit abuse")
-        print("KICKED")
+        return DropPlayer(src, "Attempted exploit abuse")
     end
 
     local chance = math.random(1,100)
