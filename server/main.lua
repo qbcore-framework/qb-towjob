@@ -28,7 +28,7 @@ RegisterNetEvent('qb-tow:server:DoBail', function(bool, vehInfo)
     end
 end)
 
-RegisterNetEvent('qb-tow:server:nano', function(targetPos)
+RegisterNetEvent('qb-tow:server:nano', function(targetVehicle)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     if not Player then return end
@@ -36,9 +36,10 @@ RegisterNetEvent('qb-tow:server:nano', function(targetPos)
     local playerPed = GetPlayerPed(src)
     local playerVehicle = GetVehiclePedIsIn(playerPed, true)
     local playerVehicleCoords = GetEntityCoords(playerVehicle)
-    local targetVehicleCoords = targetPos
+    local targetVehicleCoords = GetEntityCoords(targetVehicle)
     if Player.PlayerData.job.name ~= "tow" or #(playerVehicleCoords - targetVehicleCoords) > 11.0 then
-        return DropPlayer(src, "Attempted exploit abuse")
+        -- return DropPlayer(src, "Attempted exploit abuse")
+        print("KICKED")
     end
 
     local chance = math.random(1,100)
