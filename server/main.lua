@@ -34,7 +34,7 @@ RegisterNetEvent('qb-tow:server:nano', function(targetVehicle)
     if not Player then return end
 
     local playerPed = GetPlayerPed(src)
-    local playerVehicle = GetVehiclePedIsIn(playerPed, false)
+    local playerVehicle = GetVehiclePedIsIn(playerPed, true)
     local playerVehicleCoords = GetEntityCoords(playerVehicle)
     local targetVehicleCoords = GetEntityCoords(targetVehicle)
     if Player.PlayerData.job.name ~= "tow" or #(playerVehicleCoords - targetVehicleCoords) > 11.0 then

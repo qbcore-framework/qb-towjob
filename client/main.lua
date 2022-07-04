@@ -324,7 +324,7 @@ RegisterNetEvent('qb-tow:client:TowVehicle', function()
                                 SetBlipColour(CurrentBlip2, 3)
                                 SetBlipRoute(CurrentBlip2, true)
                                 SetBlipRouteColour(CurrentBlip2, 3)
-                                TriggerServerEvent('qb-tow:server:nano')
+                                TriggerServerEvent('qb-tow:server:nano', targetVehicle)
                                 --remove zone
                                 CurrentLocation.zoneCombo:destroy()
                             end
