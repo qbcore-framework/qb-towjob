@@ -17,6 +17,10 @@ Config.Locations = {
         label = "Flatbed",
         coords = vector4(489.65, -1331.82, 29.33, 306.5),
     },
+    ["dropoff"] = {
+        label = "Vehicle Drop Off Location",
+        coords = vector3(491.00, -1314.69, 29.25)
+    },
     ["towspots"] = {
         [1] =  {model = "sultanrs", coords = vector3(-2480.8720703125, -211.96409606934, 17.397672653198)},
         [2] =  {model = "zion", coords = vector3(-2723.392578125, 13.207388877869, 15.12806892395)},
