@@ -30,13 +30,12 @@ local function getVehicleInDirection(coordFrom, coordTo)
 end
 
 local function isTowVehicle(vehicle)
-    local retval = false
     for k in pairs(Config.Vehicles) do
-        if GetEntityModel(vehicle) == GetHashKey(k) then
-            retval = true
+        if GetEntityModel(vehicle) == joaat(k) then
+            return true
         end
     end
-    return retval
+    return false
 end
 
 -- Old Menu Code (being removed)
@@ -291,8 +290,8 @@ RegisterNetEvent('qb-tow:client:TowVehicle', function()
             local coordB = GetOffsetFromEntityInWorldCoords(playerped, 0.0, 5.0, 0.0)
             local targetVehicle = getVehicleInDirection(coordA, coordB)
 
-            if NpcOn and CurrentLocation ~= nil then
-                if GetEntityModel(targetVehicle) ~= GetHashKey(CurrentLocation.model) then
+            if NpcOn and CurrentLocation then
+                if GetEntityModel(targetVehicle) ~= joaat(CurrentLocation.model) then
                     QBCore.Functions.Notify(Lang:t("error.vehicle_not_correct"), "error")
                     return
                 end
@@ -324,7 +323,8 @@ RegisterNetEvent('qb-tow:client:TowVehicle', function()
                                 SetBlipColour(CurrentBlip2, 3)
                                 SetBlipRoute(CurrentBlip2, true)
                                 SetBlipRouteColour(CurrentBlip2, 3)
-                                TriggerServerEvent('qb-tow:server:nano', targetVehicle)
+                                local vehNetID = NetworkGetNetworkIdFromEntity(targetVehicle)
+                                TriggerServerEvent('qb-tow:server:nano', vehNetID)
                                 --remove zone
                                 CurrentLocation.zoneCombo:destroy()
                             end
