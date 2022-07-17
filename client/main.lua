@@ -10,6 +10,7 @@ local selectedVeh = nil
 local showMarker = false
 local CurrentBlip2 = nil
 local CurrentTow = nil
+local drawDropOff = false
 
 -- Functions
 
@@ -22,6 +23,14 @@ local function getRandomVehicleLocation()
     return randomVehicle
 end
 
+local function drawDropOffMarker()
+    CreateThread(function()
+        while drawDropOff do
+            DrawMarker(2, Config.Locations["dropoff"].coords.x, Config.Locations["dropoff"].coords.y, Config.Locations["dropoff"].coords.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
+            Wait(0)
+        end
+    end)
+end
 
 local function getVehicleInDirection(coordFrom, coordTo)
 	local rayHandle = CastRayPointToPoint(coordFrom.x, coordFrom.y, coordFrom.z, coordTo.x, coordTo.y, coordTo.z, 10, PlayerPedId(), 0)
@@ -319,10 +328,12 @@ RegisterNetEvent('qb-tow:client:TowVehicle', function()
                             if NpcOn then
                                 RemoveBlip(CurrentBlip)
                                 QBCore.Functions.Notify(Lang:t("mission.goto_depot"), "primary", 5000)
-                                CurrentBlip2 = AddBlipForCoord(491.00, -1314.69, 29.25)
+                                CurrentBlip2 = AddBlipForCoord(Config.Locations["dropoff"].coords.x, Config.Locations["dropoff"].coords.y, Config.Locations["dropoff"].coords.z)
                                 SetBlipColour(CurrentBlip2, 3)
                                 SetBlipRoute(CurrentBlip2, true)
                                 SetBlipRouteColour(CurrentBlip2, 3)
+                                drawDropOff = true
+                                drawDropOffMarker()
                                 local vehNetID = NetworkGetNetworkIdFromEntity(targetVehicle)
                                 TriggerServerEvent('qb-tow:server:nano', vehNetID)
                                 --remove zone
@@ -358,7 +369,9 @@ RegisterNetEvent('qb-tow:client:TowVehicle', function()
                         deliverVehicle(CurrentTow)
                     end
                 end
+                RemoveBlip(CurrentBlip2)
                 CurrentTow = nil
+                drawDropOff = false
                 QBCore.Functions.Notify(Lang:t("mission.vehicle_takenoff"), "success")
             end, function() -- Cancel
                 StopAnimTask(PlayerPedId(), "mini@repair", "fixing_a_ped", 1.0)
