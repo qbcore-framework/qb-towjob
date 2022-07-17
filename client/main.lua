@@ -23,7 +23,7 @@ local function getRandomVehicleLocation()
     return randomVehicle
 end
 
-local function drawDropOffMarker(bool)
+local function drawDropOffMarker()
     CreateThread(function()
         while drawDropOff do
             DrawMarker(2, Config.Locations["dropoff"].coords.x, Config.Locations["dropoff"].coords.y, Config.Locations["dropoff"].coords.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
