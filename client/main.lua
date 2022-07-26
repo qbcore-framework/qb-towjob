@@ -428,7 +428,7 @@ RegisterNetEvent('qb-tow:client:SpawnNPCVehicle', function()
             local veh = NetToVeh(netId)
             exports['LegacyFuel']:SetFuel(veh, 0.0)
             VehicleSpawned = true
-        end, CurrenLocation.model, CurrentLocation, true)
+        end, CurrentLocation.model, CurrentLocation, true)
     end
 end)
 
