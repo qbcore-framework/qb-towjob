@@ -241,7 +241,7 @@ RegisterNetEvent('qb-tow:client:SpawnVehicle', function()
         for i = 1, 9, 1 do
             SetVehicleExtra(veh, i, 0)
         end
-    end, vehicleInfo, coords, true)
+    end, vehicleInfo, coords, false)
 end)
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
@@ -428,7 +428,7 @@ RegisterNetEvent('qb-tow:client:SpawnNPCVehicle', function()
             local veh = NetToVeh(netId)
             exports['LegacyFuel']:SetFuel(veh, 0.0)
             VehicleSpawned = true
-        end, CurrentLocation.model, CurrentLocation, true)
+        end, CurrentLocation.model, CurrentLocation, false)
     end
 end)
 
