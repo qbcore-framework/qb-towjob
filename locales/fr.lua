@@ -30,6 +30,12 @@ local Translations = {
     info = {
         tow = "Placez un véhicule sur le dessus de votre dépanneuse",
         toggle_npc = "Activer Mission PNJ",
+        skick = "Tentative d'exploit",
+    },
+    label = {
+        payslip = "Paie",
+        vehicle = "Vehicule",
+        npcz = "ZonePNJ",
     }
 }
 
