@@ -40,7 +40,7 @@ RegisterNetEvent('qb-tow:server:nano', function(vehNetID)
     local targetVehicleCoords = GetEntityCoords(targetVehicle)
     local dist = #(playerVehicleCoords - targetVehicleCoords)
     if Player.PlayerData.job.name ~= "tow" or dist > 11.0 then
-        return DropPlayer(src, "Attempted exploit abuse")
+        return DropPlayer(src, Lang:t("info.skick"))
     end
 
     local chance = math.random(1,100)
@@ -58,7 +58,7 @@ RegisterNetEvent('qb-tow:server:11101110', function(drops)
     local playerPed = GetPlayerPed(src)
     local playerCoords = GetEntityCoords(playerPed)
     if Player.PlayerData.job.name ~= "tow" or #(playerCoords - vector3(Config.Locations["main"].coords.x, Config.Locations["main"].coords.y, Config.Locations["main"].coords.z)) > 6.0 then
-        return DropPlayer(src, "Attempted exploit abuse")
+        return DropPlayer(src, Lang:t("info.skick"))
     end
 
     drops = tonumber(drops)
