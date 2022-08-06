@@ -93,21 +93,21 @@ local function CreateZone(type, number)
 
     if type == "main" then
         event = "qb-tow:client:PaySlip"
-        label = "Payslip"
+        label = Lang:t("label.payslip")
         coords = vector3(Config.Locations[type].coords.x, Config.Locations[type].coords.y, Config.Locations[type].coords.z)
         heading = Config.Locations[type].coords.h
         boxName = Config.Locations[type].label
         size = 3
     elseif type == "vehicle" then
         event = "qb-tow:client:Vehicle"
-        label = "Vehicle"
+        label = Lang:t("label.vehicle")
         coords = vector3(Config.Locations[type].coords.x, Config.Locations[type].coords.y, Config.Locations[type].coords.z)
         heading = Config.Locations[type].coords.h
         boxName = Config.Locations[type].label
         size = 5
     elseif type == "towspots" then
         event = "qb-tow:client:SpawnNPCVehicle"
-        label = "NPCZone"
+        label = Lang:t("label.npcz")
         coords = vector3(Config.Locations[type][number].coords.x, Config.Locations[type][number].coords.y, Config.Locations[type][number].coords.z)
         heading = Config.Locations[type][number].coords.h
         boxName = Config.Locations[type][number].name
