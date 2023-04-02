@@ -365,7 +365,7 @@ RegisterNetEvent('qb-tow:client:TowVehicle', function()
                 DetachEntity(CurrentTow, true, true)
                 if NpcOn then
                     local targetPos = GetEntityCoords(CurrentTow)
-                    if #(targetPos - vector3(Config.Locations["vehicle"].coords.x, Config.Locations["vehicle"].coords.y, Config.Locations["vehicle"].coords.z)) < 25.0 then
+                    if #(targetPos - vector3(Config.Locations["dropoff"].coords.x, Config.Locations["dropoff"].coords.y, Config.Locations["dropoff"].coords.z)) < 25.0 then
                         deliverVehicle(CurrentTow)
                     end
                 end
