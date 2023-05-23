@@ -2,6 +2,15 @@ Config = {}
 
 Config.UseTarget = GetConvar('UseTarget', 'false') == 'true'
 
+Config.depotbones = {
+    "door_dside_f",
+    "door_dside_r",
+    "door_pside_f",
+    "door_pside_r",
+    "boot"
+}
+
+Config.Debug = true
 Config.BailPrice = 250
 
 Config.Vehicles = {
