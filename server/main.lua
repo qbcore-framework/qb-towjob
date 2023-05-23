@@ -92,3 +92,30 @@ QBCore.Commands.Add("tow", Lang:t("info.tow"), {}, false, function(source)
         TriggerClientEvent("qb-tow:client:TowVehicle", source)
     end
 end)
+
+-- Depot System
+
+RegisterServerEvent('qb-towjob:server:Depot')
+AddEventHandler('qb-towjob:server:Depot', function(plate, depotprice, reason)
+    local src = source
+    local price = tonumber(depotprice)
+    local depotReason = tostring(reason)
+    local Player = QBCore.Functions.GetPlayer(src)
+    
+    if Player then
+        local fullName = Player.PlayerData.charinfo.firstname.." "..Player.PlayerData.charinfo.lastname
+        local depotDate = os.date('%d / %m / %Y')
+
+        exports.oxmysql:execute('UPDATE player_vehicles SET state = @state, depotdate = @depotdate, depotprice = @depotprice, reason = @reason WHERE plate = @plate', {
+            ['@state'] = 2,
+            ['@depotdate'] = depotDate,
+            ['@depotprice'] = price,
+            ['@reason'] = depotReason,
+            ['@plate'] = plate
+        })
+        
+        TriggerClientEvent('QBCore:Notify', src, "Vehicle depoted")
+        
+        print("ID: "..src.." | Reason: "..depotReason.." | Price: "..price.." | FullName: "..fullName.." | Depot Date: "..depotDate)
+    end
+end)
