@@ -266,6 +266,27 @@ RegisterNetEvent('jobs:client:ToggleNpc', function()
             QBCore.Functions.Notify(Lang:t("error.finish_work"), "error")
             return
         end
+
+        -- Check if the player is inside a vehicle named "flatbed"
+        local playerPed = PlayerPedId()
+        local playerVehicle = GetVehiclePedIsIn(playerPed, false)
+        local playerVehicleModel = GetEntityModel(playerVehicle)
+        local towableVehicles = Config.Vehicles
+
+        local isTowable = false
+        for vehicleName, _ in pairs(towableVehicles) do
+            local vehicleModel = GetHashKey(vehicleName)
+            if playerVehicleModel == vehicleModel then
+                isTowable = true
+                break
+            end
+        end
+
+        if not isTowable then
+            QBCore.Functions.Notify("You must be inside one of the towable vehicles to toggle the NPC.", "error")
+            return
+        end
+
         NpcOn = not NpcOn
         if NpcOn then
             local randomLocation = getRandomVehicleLocation()
@@ -317,11 +338,11 @@ RegisterNetEvent('qb-tow:client:TowVehicle', function()
                             disableMouse = false,
                             disableCombat = true,
                         }, {
-                            animDict = "mini@repair",
-                            anim = "fixing_a_ped",
+                            animDict = animDict,
+                            anim = anim,
                             flags = 16,
                         }, {}, {}, function() -- Done
-                            StopAnimTask(PlayerPedId(), "mini@repair", "fixing_a_ped", 1.0)
+                            StopAnimTask(PlayerPedId(), animDict, anim, 1.0)
                             AttachEntityToEntity(targetVehicle, vehicle, GetEntityBoneIndexByName(vehicle, 'bodyshell'), 0.0, -1.5 + -0.85, 0.0 + 1.15, 0, 0, 0, 1, 1, 0, 1, 0, 1)
                             FreezeEntityPosition(targetVehicle, true)
                             CurrentTow = targetVehicle
@@ -341,7 +362,7 @@ RegisterNetEvent('qb-tow:client:TowVehicle', function()
                             end
                             QBCore.Functions.Notify(Lang:t("mission.vehicle_towed"), "success")
                         end, function() -- Cancel
-                            StopAnimTask(PlayerPedId(), "mini@repair", "fixing_a_ped", 1.0)
+                            StopAnimTask(PlayerPedId(), animDict, anim, 1.0)
                             QBCore.Functions.Notify(Lang:t("error.failed"), "error")
                         end)
                     end
@@ -354,11 +375,11 @@ RegisterNetEvent('qb-tow:client:TowVehicle', function()
                 disableMouse = false,
                 disableCombat = true,
             }, {
-                animDict = "mini@repair",
-                anim = "fixing_a_ped",
+                animDict = animDict,
+                anim = anim,
                 flags = 16,
             }, {}, {}, function() -- Done
-                StopAnimTask(PlayerPedId(), "mini@repair", "fixing_a_ped", 1.0)
+                StopAnimTask(PlayerPedId(), animDict, anim, 1.0)
                 FreezeEntityPosition(CurrentTow, false)
                 Wait(250)
                 AttachEntityToEntity(CurrentTow, vehicle, 20, -0.0, -15.0, 1.0, 0.0, 0.0, 0.0, false, false, false, false, 20, true)
@@ -374,7 +395,7 @@ RegisterNetEvent('qb-tow:client:TowVehicle', function()
                 drawDropOff = false
                 QBCore.Functions.Notify(Lang:t("mission.vehicle_takenoff"), "success")
             end, function() -- Cancel
-                StopAnimTask(PlayerPedId(), "mini@repair", "fixing_a_ped", 1.0)
+                StopAnimTask(PlayerPedId(), animDict, anim, 1.0)
                 QBCore.Functions.Notify(Lang:t("error.failed"), "error")
             end)
         end
@@ -449,4 +470,175 @@ CreateThread(function()
             Wait(1000)
         end
     end
+end)
+
+
+
+--- Depot Systemmmmmmm
+
+RegisterNetEvent('qb-towjob:client:Depotmenu')
+AddEventHandler('qb-towjob:client:Depotmenu', function()  
+    TriggerEvent('qb-menu:client:openMenu', {
+        {
+            header = "Depot",
+            isMenuHeader = true
+        },
+        {
+            id = 2,
+            header = "Custom Invoice",
+            txt = "Robbery | Kidnapping | Killing | Crime",
+            params = {
+                event = "qb-towjob:client:Depotwithinput",
+                -- args = 8000
+            }
+        },
+        {
+            id = 3,
+            header = "Depot: $8000",
+            txt = "Driving Reckless | Reversing a highway | Reversing a branch road",
+            params = {
+                event = "qb-towjob:client:DepotVehicle",
+                args = { amount = 8000, depotreason = 'Traffic violation like "driving reckless, reversing a highway or branch road"' }
+            }
+        },
+        {
+            id = 4,
+            header = "Depot: $5000",
+            txt = "Leave the vehicle on the street | Obstructing traffic",
+            params = {
+                event = "qb-towjob:client:DepotVehicle",
+                args = { amount = 5000, depotreason = "Obstructing and leaving the vehicle on the street" }
+            }
+        },
+        {
+            id = 5,
+            header = "Depot: $2500",
+            txt = "Parking in places not designated for parking | Parking on the sidewalk | Parking in front of government places",
+            params = {
+                event = "qb-towjob:client:DepotVehicle",
+                args = { amount = 2500, depotreason = "Parking in unallocated places" }
+            }
+        },
+        {
+            header = "Close",
+            icon = "fas fa-xmark",
+            txt = "",
+            params = {
+                event = "",
+            }
+        },
+    })
+end)
+
+RegisterNetEvent('qb-towjob:client:DepotVehicle')
+AddEventHandler('qb-towjob:client:DepotVehicle', function(args)
+    local amount = args.amount
+    local depotreason = args.depotreason
+    local vehicle = QBCore.Functions.GetClosestVehicle()
+    
+    if vehicle ~= nil and vehicle ~= 0 then
+        local bodyDamage = math.ceil(GetVehicleBodyHealth(vehicle))
+        local engineDamage = math.ceil(GetVehicleEngineHealth(vehicle))
+        local totalFuel = exports['LegacyFuel']:GetFuel(vehicle)
+        local ped = PlayerPedId()
+        local pos = GetEntityCoords(ped)
+        local vehpos = GetEntityCoords(vehicle)
+        
+        if #(pos - vehpos) < 5.0 and not IsPedInAnyVehicle(ped) then
+            local plate = QBCore.Functions.GetPlate(vehicle)
+
+            QBCore.Functions.Progressbar("untowing_vehicle", "Depoting "..plate, 7000, false, true, {
+                disableMovement = true,
+                disableCarMovement = true,
+                disableMouse = false,
+                disableCombat = true,
+            }, {}, {}, {}, function() -- Done
+                TriggerServerEvent('qb-garages:server:removeOutsideVehicles', plate)
+                TriggerServerEvent("qb-towjob:server:Depot", plate, amount, depotreason)
+                if Config.Debug then
+                    print("^5Debug^7: ^2Vehicle has been depoted by menu (Not custom input) ^6Plate: "..plate..", ^2For ^6"..depotreason.." ^2Reason^7")
+                end
+                QBCore.Functions.DeleteVehicle(vehicle)
+            end, function() -- Cancel
+                QBCore.Functions.Notify(Lang:t("error.failed"), "error")
+            end)
+        end
+    end
+end)
+
+RegisterNetEvent('qb-towjob:client:Depotwithinput', function(args)
+    local vehicle = QBCore.Functions.GetClosestVehicle()
+    
+    if vehicle ~= nil and vehicle ~= 0 then
+        local bodyDamage = math.ceil(GetVehicleBodyHealth(vehicle))
+        local engineDamage = math.ceil(GetVehicleEngineHealth(vehicle))
+        local totalFuel = exports['LegacyFuel']:GetFuel(vehicle)
+        local ped = PlayerPedId()
+        local pos = GetEntityCoords(ped)
+        local vehpos = GetEntityCoords(vehicle)
+        
+        if #(pos - vehpos) < 5.0 and not IsPedInAnyVehicle(ped) then
+            local dialog = exports['qb-input']:ShowInput({
+                header = 'Depot System',
+                submitText = "Submit",
+                inputs = {
+                    {
+                        text = 'Reason',
+                        name = "resinvoice",
+                        type = "text",
+                        isRequired = true
+                    },
+                    {
+                        text = 'Invoice',
+                        name = "idinvoice",
+                        type = "number",
+                        isRequired = true
+                    },
+                }
+            })
+
+            if dialog ~= nil then
+                local idinvoice = tonumber(dialog['idinvoice'])
+                local resinvoice = dialog['resinvoice']
+                
+                if idinvoice > 0 then
+                    local plate = QBCore.Functions.GetPlate(vehicle)
+
+                    QBCore.Functions.Progressbar("untowing_vehicle", "Depoting "..plate, 5000, false, true, {
+                        disableMovement = true,
+                        disableCarMovement = true,
+                        disableMouse = false,
+                        disableCombat = true,
+                    }, {}, {}, {}, function() -- Done
+                        TriggerServerEvent('qb-garages:server:removeOutsideVehicles', plate)
+                        TriggerServerEvent("qb-towjob:server:Depot", plate, idinvoice, resinvoice)
+                        Wait(500)
+                        QBCore.Functions.DeleteVehicle(vehicle)
+                        if Config.Debug then
+                            print("^5Debug^7: ^2Vehicle has been depoted by input (custom input) ^6Plate: "..plate..", ^2For ^6"..resinvoice.." ^2Reason^7")
+                        end
+                    end, function() -- Cancel
+                        QBCore.Functions.Notify("Depot process canceled.", "error")
+                    end)
+                else
+                    QBCore.Functions.Notify("Please enter a valid invoice amount.", "error")
+                end
+            end
+        end
+    end
+end)
+
+CreateThread(function()
+    exports['qb-target']:AddTargetBone(Config.depotbones, {
+        options = {
+            ["Vehicledepot"] = {
+                type = "client",
+                event = "qb-towjob:client:Depotmenu",
+                icon = "fas fa-car-side",
+                distance = 1.5,
+                label = "Depot Vehicle",
+                job = "tow"
+            }
+        }
+    })
 end)
