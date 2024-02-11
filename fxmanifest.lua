@@ -1,7 +1,8 @@
 fx_version 'cerulean'
 game 'gta5'
-
-description 'QB-TowJob'
+lua54 'yes'
+author 'Kakarot'
+description 'Allows players to tow vehicles around the map for money'
 version '1.2.0'
 
 shared_scripts {
@@ -19,5 +20,3 @@ client_scripts {
 }
 
 server_script 'server/main.lua'
-
-lua54 'yes'
